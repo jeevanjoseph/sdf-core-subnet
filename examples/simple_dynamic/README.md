@@ -1,4 +1,4 @@
-# OCI Subnet Module Example
+# OCI Subnet Module Example (Simple, Dynamic CIDRs)
 
 ## Introduction
 
@@ -14,6 +14,21 @@ Notes on the subnets in this example:
 * test3 allocates the fifth (cidr\_num of 4 given) /28 network in the 192.168.0.128/25 CIDR.
 * test4 uses a static CIDR of 192.168.0.12/30.
 * test5 also uses a static CIDR of 192.168.0.16/30.
+
+While dynamic CIDRs are very powerful, their use results in increased complexity.  The following considerations should be kept in mind when using dynamic CIDRs:
+
+* Documentation of the environment can be laborious.  For instance, to create the topology diagram below, manual IPv4 subnet calculations had to be made as the actual CIDR is not given in the code.
+* Many organizations are very precise about IP address space allocations (managed by a DDI/IPAM system), which removes many of the benefits of dynamic address allocation (two differing ways of managing IP address space, which cannot easily co-exist).
+
+The following resources are created in this example:
+
+* 1x VCN
+* 5x Subnets
+
+## Topology Diagram
+This example is intended to the following OCI topology:
+
+![Topology diagram](./docs/Example-simple_dynamic.png)
 
 ## Using this example
 Prepare one variable file named `terraform.tfvars` with the required information. The contents of `terraform.tfvars` should look something like the following (or copy and re-use the contents of `terraform.tfvars.template`:
