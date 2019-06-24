@@ -1,250 +1,147 @@
-# Oracle Cloud Infrastructure Network Terraform Module
+# Oracle Cloud Infrastructure (OCI) Terraform Subnet Module
 
 ## Introduction
 
-This module provides the initial bootstrapping needed to build a new Virtual Cloud Network (VCN) and other optional services in Oracle Cloud Infrastructure (OCI).
+
+This module assist in building one or more new Subnet(s) in OCI.
 
 ## Solution
 
-A VCN is the core foundation of a network in OCI.  This module provides the ability to create the following:
+Subnets are the home for many IP-based resources in OCI.  Much like a VLAN in traditional on-prem LANs, it's a foundational component in a OCI cloud environment.
 
 | Resource | Created by Default? |
 |---|---|
-| VCN | Yes |
-| VCN-wide Security List | Yes (optional) |
-| Internet Gateway | No (optional) |
-| NAT Gateway | No (optional) |
-| Service Gateway | No (optional) |
-| Dynamic Routing Gateway | No (optional) |
-| Bastion | No (optional) |
+| Subnet(s) | No |
 
-By using this module, a basic cloud network will be created, including the basic foundational communication paths (for most use-cases, though not all).  For situations where VPN-connect, FastConnect or VCN Peering is needed, these services will need to be built on top of the VCN deployed by this module.
+### Prerequisites
+This module does not create any dependencies or prerequisites (these must be created prior to using this module):
+
+* VCN
+* Security List(s)
+  * The *network_security* module may be used to create and manage Security Lists.
+* Route Table
+  * Often times only a couple of routing policies exist and are created in the *network* module.
+* DHCP Options
+  * Often times only a couple of DHCP Options (DNS profiles) exist and are created in the *network* module.
 
 ### Resource-specific inputs
 
-#### VCN
+#### Subnet
 
 | Attribute | Data Type | Required | Default Value | Valid Values | Description |
 |---|---|---|---|---|---|
 | default\_compartment\_id | string | yes | none | string of the compartment OCID | This is the default OCID that will be used when creating objects (unless overridden for any specific object).  This needs to be the OCID of a pre-existing compartment (it will not create the compartment. |
-| vcn\_options | map | no | see below | see below | The optional parameters that can be used to customize the VCN. |
+| vcn\_id | string | yes | N/A (no default) | The OCID of the VCN in which the subnet(s) are to be created. |
+| vcn\_cidr | string | no | N/A (no default) | The CIDR used by the VCN.  This is only needed when dynamically generating subnet CIDRs.
+| subnets | map | no | see below | see below | The parameters used to create the subnets. |
 
-Note that as the VCN is created, the default resources (Route Table, Security List and DHCP Options) are left as-is (not modified in any way).  Often these resources are not used (intended to serve as a black-hole, requiring the use of explicitly-defined resources).  See the documentation around [Default Resources](https://www.terraform.io/docs/providers/oci/guides/managing_default_resources.html), [Default Components that Come With Your VCN](https://docs.cloud.oracle.com/iaas/Content/Network/Concepts/overview.htm#default) and [default Security Lists](https://docs.cloud.oracle.com/iaas/Content/Network/Concepts/securitylists.htm#default-list) for more information.
+**subnets**
 
-**vcn_options**
+The `subnets` attribute is an optional map object attribute.  Note that if this attribute is used, all keys/values must be specified (Terraform does not allow for default or optional map keys/values).
 
-The `vcn_options` attribute is an optional map attribute.  Note that if this attribute is used, all keys/values must be specified (Terraform does not allow for default or optional map keys/values).  It has the following defined keys (and default values):
+Each entry's key specifies the name to be given to the subnet, with its attributes specified as values in a sub-map.
+
+Each entry has the following defined keys (and default values):
 
 | Key | Data Type | Default Value | Valid Values | Description |
 |---|---|---|---|---|
-| display\_name | string | "vcn" | Any name acceptable to the OCI API. | Used to define a specific name for your VCN. |
 | compartment\_id | string | null | Compartment OCID | Pre-existing compartment OCID (if default compartment is not to be used).  If this value is null, the default compartment OCID will be used. |
-| cidr | string | "10.0.0.0/16" | IPv4 CIDR | Specify the IPv4 CIDR to be used for the VCN. |
-| dns\_label | string | "vcn" | Valid DNS name. | Specify the DNS label to be used for the VCN.  If this value is null, DNS will be disabled for the VCN. |
+| dynamic_cidr | bool | false | true/false | Whether or not the CIDR should be dynamically calculated (true) or statically set (false). |
+| cidr | string | static cidr: null, dynamic_cidr: VCN CIDR | IPv4 CIDR | Specify the IPv4 CIDR to be used for the Subnet.  If dynamic_cidr is true, the CIDR specified here will be used in the subnet calculation.  If dynamic_cidr is false, the CIDR specified here will be the one used by the subnet. |
+| cidr\_len | number | 28 | Any number between 16 and 30 | This is the desired bit length (number of bits in the subnet mask) for the new, dynamically generated subnet CIDR.  Only applicable if dynamic_cidr is true. |
+| cidr\_num | number | Defaults to the index number of the subnet being defined | This is the zero-indexed network number that should be used for the subnet.  For example, let's say that cidr is 192.168.0.0/16 and cidr\_len is 24.  For cidr\_num of 1, a dynamically generated CIDR of 192.168.1.0/24 would be given.  In the same scenario, with a cidr\_num of 0, 192.168.0.0/24 would result and cidr\_num of 240 would yield 192.168.240.0/24. |
+| enable\_dns | bool | true | Whether or not DNS should be enabled for the subnet. |
+| dns\_label | string | "vcn" | Valid DNS name. | Specify the DNS label to be used for the VCN.  If this value is null, a dynamically generated value of *subnet<index_num>* will be used.  For example, the third subnet definition, if DNS is enabled, but no dns_label is provided (a null value is given), a value of *subnet2* will be generated (remembering that index numbers are zero-indexed). |
+| private | bool | true | true/false | If set to true, the subnet will be a private subnet.  If set to false, a public subnet will be created. |
+| ad | number | null | null, 0, 1 or 2 (dependent upon the number of available Availability Domains (ADs) in the specific region being used) | If a regional subnet is desired, leave this value as null, otherwise specify the AD number (zero-index, meaning AD1 = 0, AD2 = 1, AD3 = 2) to create an AD-specific subnet. |
+| dhcp\_options\_id | string | null | null or OCID | Specify the OCID of the DHCP Options to use for the subnet. |
+| route\_table\_id | string | null | null or OCID | Specify the OCID of the Route Table to use for the subnet. |
+| security\_list\_ids | list of strings | null | null or list of OCID(s) | Specify the OCID(s) of the Security List(s) to use for the subnet, in list form. |
 
 Example:
 
 ```
-module "oci_network" {
+module "oci_subnets" {
   ... /snip - shortened for brevity...
 
-  vcn_options = {
-    display_name      = "Module test"
-    cidr              = "10.0.0.0/24"
-    dns_label         = "testvcn"
-    compartment_id    = null
+  default_compartment_id  = var.default_compartment_id
+  # vcn_id = data.terraform_remote_state.network.outputs.vcn.id
+  vcn_id                  = oci_core_vcn.this.id
+  vcn_cidr                = oci_core_vcn.this.cidr_block
+  
+  subnets = {
+    test1 = {
+      compartment_id    = null
+      dynamic_cidr      = false
+      cidr              = "192.168.0.0/30"
+      cidr_len          = null
+      cidr_num          = null
+      enable_dns        = true
+      dns_label         = "test1"
+      private           = true
+      ad                = null
+      dhcp_options_id   = null
+      route_table_id    = null
+      security_list_ids = null
+    },
+    test2 = {
+      compartment_id    = null
+      dynamic_cidr      = false
+      cidr              = "192.168.0.4/30"
+      cidr_len          = null
+      cidr_num          = null
+      enable_dns        = true
+      dns_label         = "test2"
+      private           = true
+      ad                = 0
+      dhcp_options_id   = null
+      route_table_id    = null
+      security_list_ids = null
+    }
   }
 }
 ```
 
-The above example will create a VCN with a CIDR of 10.0.0.0/24, display name of *Module test*, DNS label of *testvcn* and use the default compartment OCID (not shown in the above example).
-
-#### Internet Gateway (IGW)
-
-| Attribute | Data Type | Required | Default Value | Valid Values | Description |
-|---|---|---|---|---|---|
-| create\_igw | bool | no | false | true/false | Whether or not a IGW should be created in the VCN. |
-| igw\_options | map | no | see below | see below | The optional parameters that can be used to customize the IGW. |
-
-**igw_options**
-
-The `igw_options` attribute is an optional map attribute.  Note that if this attribute is used, all keys/values must be specified (Terraform does not allow for default or optional map keys/values).  It has the following defined keys (and default values):
-
-| Key | Data Type | Default Value | Valid Values | Description |
-|---|---|---|---|---|
-| display\_name | string | "igw" | Any name acceptable to the OCI API. | Used to define a specific name for your IGW. |
-| compartment\_id | string | null | Compartment OCID | Pre-existing compartment OCID (if default compartment is not to be used).  If this value is null, the default compartment OCID will be used. |
-| enabled | bool | true | true/false | Whether or not the IGW should be enabled. |
-
-Example:
-
-```
-module "oci_network" {
-  ... /snip - shortened for brevity...
-
-  igw_options = {
-    display_name     = "my_igw"
-    compartment_id   = null
-    enabled          = false
-  }
-}
-```
-
-The above example will create a IGW (enabled) in the VCN with a display name of *my_igw* and use the default compartment OCID (not shown in the above example).
-
-#### NAT Gateway (NATGW)
-
-| Attribute | Data Type | Required | Default Value | Valid Values | Description |
-|---|---|---|---|---|---|
-| create\_natgw | bool | no | false | true/false | Whether or not a NATGW should be created in the VCN. |
-| natgw\_options | map | no | see below | see below | The optional parameters that can be used to customize the NATGW. |
-
-**natgw_options**
-
-The `natgw_options` attribute is an optional map attribute.  Note that if this attribute is used, all keys/values must be specified (Terraform does not allow for default or optional map keys/values).  It has the following defined keys (and default values):
-
-| Key | Data Type | Default Value | Valid Values | Description |
-|---|---|---|---|---|
-| display\_name | string | "natgw" | Any name acceptable to the OCI API. | Used to define a specific name for your IGW. |
-| compartment\_id | string | null | Compartment OCID | Pre-existing compartment OCID (if default compartment is not to be used).  If this value is null, the default compartment OCID will be used. |
-| block\_traffic | bool | false | true/false | Whether or not the NATGW should block traffic. |
-
-Example:
-
-```
-module "oci_network" {
-  ... /snip - shortened for brevity...
-
-  natgw_options = {
-    display_name     = "my_natgw"
-    compartment_id   = null
-    block_traffic    = false
-  }
-}
-```
-
-The above example will create a NATGW in the VCN with a display name of *my_natgw*, it will not block traffic and will use the default compartment OCID (not shown in the above example).
-
-#### Service Gateway (SVCGW)
-
-| Attribute | Data Type | Required | Default Value | Valid Values | Description |
-|---|---|---|---|---|---|
-| create\_svcgw | bool | no | false | true/false | Whether or not a SVCGW should be created in the VCN. |
-| svcgw\_options | map | no | see below | see below | The optional parameters that can be used to customize the SVCGW. |
-
-**svcgw_options**
-
-The `svcgw_options` attribute is an optional map attribute.  Note that if this attribute is used, all keys/values must be specified (Terraform does not allow for default or optional map keys/values).  It has the following defined keys (and default values):
-
-| Key | Data Type | Default Value | Valid Values | Description |
-|---|---|---|---|---|
-| display\_name | string | "svcgw" | Any name acceptable to the OCI API. | Used to define a specific name for your SVCGW. |
-| compartment\_id | string | null | Compartment OCID | Pre-existing compartment OCID (if default compartment is not to be used).  If this value is null, the default compartment OCID will be used. |
-| services | list(string) | null | The OCID(s) of any valid OCI service gateway service(s). | Provide the service that should be permitted by the Service Gateway.  Use the `svcgw_services` module output for a list of services in the region (see below for an example of this). |
-
-Example:
-
-```
-module "oci_network" {
-  ... /snip - shortened for brevity...
-
-  svcgw_options = {
-    display_name      = "my_svcgw"
-    compartment_id    = null
-    services          = [
-      module.oci_network.svcgw_services.0.id
-    ]
-  }
-}
-```
-
-The above example will create a SVCGW in the VCN with a display name of *my_svcgw*, use the default compartment OCID (not shown in the above example) and will use the first service in the list of services available in the region.
-
-#### Dynamic Routing Gateway (DRG)
-
-| Attribute | Data Type | Required | Default Value | Valid Values | Description |
-|---|---|---|---|---|---|
-| create\_drg | bool | no | false | true/false | Whether or not a DRG should be created in the VCN. |
-| drg\_options | map | no | see below | see below | The optional parameters that can be used to customize the DRG. |
-
-**drg_options**
-
-The `drg_options` attribute is an optional map attribute.  Note that if this attribute is used, all keys/values must be specified (Terraform does not allow for default or optional map keys/values).  It has the following defined keys (and default values):
-
-| Key | Data Type | Default Value | Valid Values | Description |
-|---|---|---|---|---|
-| display\_name | string | "drg" | Any name acceptable to the OCI API. | Used to define a specific name for your DRG. |
-| compartment\_id | string | null | Compartment OCID | Pre-existing compartment OCID (if default compartment is not to be used).  If this value is null, the default compartment OCID will be used. |
-| route\_table\_id | string | null | The OCID of any valid, pre-existing OCI Route Table. | This is optional, but in cases where a Route Table association is desired (with the DRG), it's the place to establish this association. |
-
-Example:
-
-```
-module "oci_network" {
-  ... /snip - shortened for brevity...
-
-  drg_options = {
-    display_name     = "my_drg"
-    compartment_id   = null
-    route_table_id   = null
-  }
-}
-```
-
-The above example will create a SVCGW in the VCN with a display name of *my_drg*, use the default compartment OCID (not shown in the above example) and will not associate any Route Table with the DRG.
+The above example will create two subnets, *test1* and *test2*.  Each of these will use the default compartment OCID (not shown in the above example) and will use statically-defined CIDRs.
 
 ### Outputs
 
-Each discrete resource that's created by the module will be exported, allowing for access to all returned attributes for the resource.  Here are the different outputs:
-
-| Resource | Always returned? | Description |
-|---|---|---|
-| vcn | yes | The VCN resource that has been created by the module. |
-| igw | no* | The IGW resource created by the module (if it was requested/created). |
-| natgw | no* | The NATGW resource created by the module (if it was requested/created). |
-| svcgw | no* | The SVCGW resource created by the module (if it was requested/created). |
-| svcgw\_services | yes | The services available that can be used. |
-| drg | no* | The DRG and DRGAttachment resources created by the module (if it was requested/created).  Note that the DRG is accessible via drg.drg, and DRGAttachment via drg.drg_attachment. |
-
-*only returned when the resource has been requested to be created.
-
-Note that you may still reference the outputs (even if they're not returned) without causing an error in Terraform (it must be smart enough to know not to throw an error in these cases).
+A map containing each subnet is returned in the *subnets* output.  The outer map key is the name of the subnet, with all subnet attributes (as a map) being returned as the value.
 
 ## Getting Started
 
-A fully-functional example has been provided in the `examples` directory.  For a quick-start guide, at minimum, you need the following (for the most basic deployment):
+Several fully-functional examples have been provided in the `examples` directory.  For a quick-start guide, at minimum, you need the following (for the most basic deployment):
 
 ```
-module "oci_network" {
+module "oci_subnets" {
   source           = "../../"
   #source          = "oracle-terraform-modules/default-vcn/oci"
   
-  default_compartment_id = "${var.compartment_id}"
+  default_compartment_id  = var.default_compartment_id
+  vcn_id                  = oci_core_vcn.this.id
+  vcn_cidr                = oci_core_vcn.this.cidr_block
+  
+  subnets = {}
 }
 ```
 
-This will deploy a VCN using the module defaults (see below for a detailed description of this).
+The above example won't actually deploy any subnets (because the *subnets* attribute is an empty map), however if you populate this map with entries (keys = name, values = subnet attributes), subnets would be deployed.
 
 ## Accessing the Solution
 
-This is a core service module, so there is not much to directly access (except the bastion, if it's been requested to be created as a part of the solution).
-
-You may continue to manage the environment using Terraform (ideal), OCI CLI, OCI console (UI), directly via the API, etc.
+This is a core service module that is foundational to many other resources in OCI, so there is really nothing to directly access.
 
 ## Summary
 
-This serves as a foundational component in an OCI environment, providing the basic network infrastructure needed within OCI.
+This serves as a foundational component in an OCI environment, providing the ability to provision subnets as-needed OCI.
 
 ## Notes/Issues
 
-* Note that if you provide any single element in the different resource maps (`vcn_options`, `igw_options`, etc), you must provide all of them.  Maps do not have a notion of an optional (or default value) for keys within the map, requiring that all keys/values be passed (if one key is passed, all keys must be passed).
+* Note that if you provide any single element in the different resource maps (`subnets`), you must provide all of them.  Maps do not have a notion of an optional (or default value) for keys within the map, requiring that all keys/values be passed (if one key is passed, all keys must be passed).
 
 ## URLs
 
-* [https://www.terraform.io/docs/providers/oci/guides/managing_default_resources.html](https://www.terraform.io/docs/providers/oci/guides/managing_default_resources.html)
-* [https://docs.cloud.oracle.com/iaas/Content/Network/Concepts/securitylists.htm#default-list](https://docs.cloud.oracle.com/iaas/Content/Network/Concepts/securitylists.htm#default-list)
-* [https://docs.cloud.oracle.com/iaas/Content/Network/Concepts/overview.htm#default](https://docs.cloud.oracle.com/iaas/Content/Network/Concepts/overview.htm#default)
-
+* Nothing at this time
 
 ## Contributing
 
