@@ -1,5 +1,5 @@
 # vcn_id
-vcn_id = "ocid1.vcn.oc1.eu-frankfurt-1.aaaaaaaapg6nhfwkclv5muursbwj4gomror7enk2sfslr5yxviliq77awxya"
+vcn_id = "<vcn_ocid>"
 
 # Subnets
 subnets = {
