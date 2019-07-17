@@ -12,6 +12,8 @@ module "oci_subnets" {
   subnets = {
     test1 = {
       compartment_id    = null
+      defined_tags      = null
+      freeform_tags     = null
       dynamic_cidr      = false
       cidr              = "192.168.0.0/30"
       cidr_len          = null
@@ -26,6 +28,8 @@ module "oci_subnets" {
     },
     test2 = {
       compartment_id    = null
+      defined_tags      = null
+      freeform_tags     = null
       dynamic_cidr      = false
       cidr              = "192.168.0.4/30"
       cidr_len          = null
@@ -40,6 +44,8 @@ module "oci_subnets" {
     },
     test3 = {
       compartment_id    = null
+      defined_tags      = null
+      freeform_tags     = null
       dynamic_cidr      = false
       cidr              = "192.168.0.8/30"
       cidr_len          = null
@@ -54,6 +60,8 @@ module "oci_subnets" {
     },
     test4 = {
       compartment_id    = null
+      defined_tags      = null
+      freeform_tags     = null
       dynamic_cidr      = false
       cidr              = "192.168.0.12/30"
       cidr_len          = null
@@ -68,6 +76,8 @@ module "oci_subnets" {
     },
     test5 = {
       compartment_id    = null
+      defined_tags      = null
+      freeform_tags     = null
       dynamic_cidr      = false
       cidr              = "192.168.0.16/30"
       cidr_len          = null

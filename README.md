@@ -33,6 +33,8 @@ This module does not create any dependencies or prerequisites (these must be cre
 | default\_compartment\_id | string | yes | none | string of the compartment OCID | This is the default OCID that will be used when creating objects (unless overridden for any specific object).  This needs to be the OCID of a pre-existing compartment (it will not create the compartment. |
 | vcn\_id | string | yes | N/A (no default) | The OCID of the VCN in which the subnet(s) are to be created. |
 | vcn\_cidr | string | no | N/A (no default) | The CIDR used by the VCN.  This is only needed when dynamically generating subnet CIDRs.
+| default\_defined\_tags | map(string) | {} | Any map of tag names and values that is acceptable to the OCI API. | These are the Defined Tags that will be set on resources (unless they're overridden at the resource level). |
+| default\_freeform\_tags | map(string) | {} | Any map of tag names and values that is acceptable to the OCI API. | These are the Freeform Tags that will be set on resources (unless they're overridden at the resource level). |
 | subnets | map | no | see below | see below | The parameters used to create the subnets. |
 
 **subnets**
@@ -46,6 +48,8 @@ Each entry has the following defined keys (and default values):
 | Key | Data Type | Default Value | Valid Values | Description |
 |---|---|---|---|---|
 | compartment\_id | string | null | Compartment OCID | Pre-existing compartment OCID (if default compartment is not to be used).  If this value is null, the default compartment OCID will be used. |
+| defined\_tags | map(string) | var.default\_defined\_tags | Any map of tag names and values that is acceptable to the OCI API. | If any Defined Tags should be set on this resource, do so with this attribute (otherwise the default Defined Tags will be used). |
+| freeform\_tags | map(string) | var.default\_freeform\_tags | Any map of tag names and values that is acceptable to the OCI API. | If any Freeform Tags should be set on this resource, do so with this attribute (otherwise the default Freeform Tags will be used). |
 | dynamic_cidr | bool | false | true/false | Whether or not the CIDR should be dynamically calculated (true) or statically set (false). |
 | cidr | string | static cidr: null, dynamic_cidr: VCN CIDR | IPv4 CIDR | Specify the IPv4 CIDR to be used for the Subnet.  If dynamic_cidr is true, the CIDR specified here will be used in the subnet calculation.  If dynamic_cidr is false, the CIDR specified here will be the one used by the subnet. |
 | cidr\_len | number | 28 | Any number between 16 and 30 | This is the desired bit length (number of bits in the subnet mask) for the new, dynamically generated subnet CIDR.  Only applicable if dynamic_cidr is true. |
@@ -72,6 +76,8 @@ module "oci_subnets" {
   subnets = {
     test1 = {
       compartment_id    = null
+      defined_tags      = null
+      freeform_tags     = null
       dynamic_cidr      = false
       cidr              = "192.168.0.0/30"
       cidr_len          = null
@@ -86,6 +92,8 @@ module "oci_subnets" {
     },
     test2 = {
       compartment_id    = null
+      defined_tags      = null
+      freeform_tags     = null
       dynamic_cidr      = false
       cidr              = "192.168.0.4/30"
       cidr_len          = null

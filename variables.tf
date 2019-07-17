@@ -17,10 +17,24 @@ variable "vcn_cidr" {
   description = "The CIDR of the VCN (used when dynamically generating subnet CIDRs, if a specific CIDR is not otherwise given)."
 }
 
+variable "default_defined_tags" {
+  type        = map(string)
+  description = "The different defined tags that are applied to each object by default."
+  default     = {}
+}
+
+variable "default_freeform_tags" {
+  type        = map(string)
+  description = "The different freeform tags that are applied to each object by default."
+  default     = {}
+}
+
 # Subnet-specific variables
 variable "subnets" {
   type                = map(object({
     compartment_id    = string,
+    defined_tags      = map(string),
+    freeform_tags     = map(string),
     dynamic_cidr      = bool,
     cidr              = string,
     cidr_len          = number,
@@ -36,6 +50,8 @@ variable "subnets" {
   description         = "Parameters for each subnet to be created/managed."
   default             = {
     compartment_id    = null
+    defined_tags      = null
+    freeform_tags     = null
     dynamic_cidr      = null
     cidr              = null
     cidr_len          = null
