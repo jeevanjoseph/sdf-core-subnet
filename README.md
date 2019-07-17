@@ -147,6 +147,10 @@ This serves as a foundational component in an OCI environment, providing the abi
 
 * Note that if you provide any single element in the different resource maps (`subnets`), you must provide all of them.  Maps do not have a notion of an optional (or default value) for keys within the map, requiring that all keys/values be passed (if one key is passed, all keys must be passed).
 
+## Release Notes
+
+See [./docs/release_notes.md](release notes) for release notes information.
+
 ## URLs
 
 * Nothing at this time
