@@ -46,7 +46,7 @@ podTemplate(
       }
       stage('TF Apply') {
         container('terraform') {
-          sh 'terraform apply -input=false examples/example-1/myplan'
+          sh 'terraform apply -input=false examples/simple/myplan'
         }
       }
     }
