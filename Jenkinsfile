@@ -43,9 +43,32 @@ podTemplate(
       }
       stage('TF Apply') {
         container('terraform') {
-          sh 'terraform apply -input=false examples/simple/myplan'
+          withCredentials([string(credentialsId: 'tenancy_ocid', variable: 'TF_VAR_tenancy_id'), 
+                           string(credentialsId: 'user_ocid_jeevan', variable: 'TF_VAR_user_id'), 
+                           string(credentialsId: 'fingerprint_jeevan', variable: 'TF_VAR_fingerprint'), 
+                           file(credentialsId: 'api_key', variable: 'TF_VAR_private_key_path'), 
+                           string(credentialsId: 'oci_key_text', variable: 'TF_VAR_private_key')]) {
+            sh 'terraform apply -input=false examples/simple/myplan'
+          }
         }
       }
+      stage('Approval') {
+        script {
+          def userInput = input(id: 'confirm', message: 'Apply Terraform?', parameters: [ [$class: 'BooleanParameterDefinition', defaultValue: false, description: 'Apply terraform', name: 'confirm'] ])
+        }
+      }
+      stage('TF Destroy') {
+        container('terraform') {
+          withCredentials([string(credentialsId: 'tenancy_ocid', variable: 'TF_VAR_tenancy_id'), 
+                           string(credentialsId: 'user_ocid_jeevan', variable: 'TF_VAR_user_id'), 
+                           string(credentialsId: 'fingerprint_jeevan', variable: 'TF_VAR_fingerprint'), 
+                           file(credentialsId: 'api_key', variable: 'TF_VAR_private_key_path'), 
+                           string(credentialsId: 'oci_key_text', variable: 'TF_VAR_private_key')]) {
+            sh 'terraform destroy -auto-approve examples/simple'
+          }
+        }
+      }
+
     }
   }
 
