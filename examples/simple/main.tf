@@ -4,7 +4,7 @@ module "oci_subnets" {
   source           = "../../"
   #source          = "oracle-terraform-modules/default-vcn/oci"
   
-  default_compartment_id  = var.default_compartment_id
+  default_compartment_id  = "${var.default_compartment_id}"
   # vcn_id = data.terraform_remote_state.network.outputs.vcn.id
   vcn_id                  = oci_core_vcn.this.id
   vcn_cidr                = oci_core_vcn.this.cidr_block
