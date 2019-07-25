@@ -25,7 +25,7 @@ podTemplate(
       //container = the container label
       stage('Test Example-simple') { 
         container('terraform') {
-          withCredentials([string(credentialsId: 'tenancy_ocid', variable: 'TF_VAR_tenancy_id'), string(credentialsId: 'user_ocid_jeevan', variable: 'TF_VAR_user_id'), string(credentialsId: 'fingerprint_jeevan', variable: 'TF_VAR_fingerprint'), file(credentialsId: 'api_key', variable: 'api_key_oci')]) {
+          withCredentials([string(credentialsId: 'tenancy_ocid', variable: 'TF_VAR_tenancy_id'), string(credentialsId: 'user_ocid_jeevan', variable: 'TF_VAR_user_id'), string(credentialsId: 'fingerprint_jeevan', variable: 'TF_VAR_fingerprint'), file(credentialsId: 'api_key', variable: 'api_key_oci'), string(credentialsId: 'oci_key_text', variable: 'TF_VAR_private_key')]) {
             sh 'mkdir creds && echo ${api_key_oci} > ./creds/api_key.pem && cat ./creds/api_key.pem && chmod 700 ./creds/api_key.pem && chown -R 1000:1000 ./creds'
             sh 'env|grep TF_VAR'
             sh 'ls -ltr ./creds'
