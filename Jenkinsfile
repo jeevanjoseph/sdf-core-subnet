@@ -22,7 +22,7 @@ podTemplate(
         checkout scm
       }
       //container = the container label
-      stage('Test Example-simple') { 
+      stage('Init & Plan') { 
         container('terraform') {
           withCredentials([string(credentialsId: 'tenancy_ocid', variable: 'TF_VAR_tenancy_id'), 
                            string(credentialsId: 'user_ocid_jeevan', variable: 'TF_VAR_user_id'), 
