@@ -68,7 +68,7 @@ podTemplate(
               sh 'env|grep TF_VAR'
               sh 'pwd'
               sh 'go version'
-              sh 'go get -v'
+              sh 'go get -v github.com/oracle/oci-go-sdk/core'
               sh 'go test -i -run TestSimple'
             }
             
