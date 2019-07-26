@@ -62,8 +62,6 @@ podTemplate(
                            string(credentialsId: 'fingerprint_jeevan', variable: 'TF_VAR_fingerprint'), 
                            file(credentialsId: 'api_key', variable: 'TF_VAR_private_key_path')]) {
             dir('sdf-tf-core-subet-test/Simple_test') {
-              sh 'ls -altr ../../'
-              sh 'ls -altr ../'
               sh 'ls -altr '
               sh 'env|grep TF_VAR'
               sh 'pwd'
@@ -73,6 +71,8 @@ podTemplate(
               sh 'go get -v github.com/gruntwork-io/terratest/modules/terraform'
               sh 'go get -v github.com/stretchr/testify/assert'
               sh 'go test -i -run TestSimple'
+              sh 'ls -altr '
+
             }
             
           }
