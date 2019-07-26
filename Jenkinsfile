@@ -70,6 +70,9 @@ podTemplate(
               sh 'go get -v github.com/oracle/oci-go-sdk/common'
               sh 'go get -v github.com/gruntwork-io/terratest/modules/terraform'
               sh 'go get -v github.com/stretchr/testify/assert'
+              sh 'apt-get update && apt-get install -y \
+                    unzip \
+                    && rm -rf /var/lib/apt/lists/*'
               sh 'curl -L -s https://releases.hashicorp.com/terraform/0.11.7/terraform_0.11.7_linux_amd64.zip -o /go/bin/terraform.zip \
                     && unzip /go/bin/terraform.zip -d /go/bin \
                     && chmod +x /go/bin/terraform'
