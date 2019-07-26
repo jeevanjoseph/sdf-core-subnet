@@ -72,7 +72,6 @@ podTemplate(
               sh 'go get -v github.com/oracle/oci-go-sdk/common'
               sh 'go get -v github.com/gruntwork-io/terratest/modules/terraform'
               sh 'go get -v github.com/stretchr/testify/assert'
-              sh 'go get -v src/modules/logger'
               sh 'go test -i -run TestSimple'
             }
             
