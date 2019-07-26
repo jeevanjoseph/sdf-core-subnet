@@ -19,7 +19,6 @@ podTemplate(
     //node = the pod label
     node('build-pod'){
       stage('Checkout') {
-        failFast true
         parallel {
           stage('module'){
             checkout scm
