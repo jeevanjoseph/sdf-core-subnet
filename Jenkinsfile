@@ -5,6 +5,7 @@ podTemplate(
   containers: [
       // containerTemplate(name: 'jnlp', image: 'jenkins/jnlp-slave:latest',args: '${computer.jnlpmac} ${computer.name}', workingDir: '/home/jenkins'),
       containerTemplate(name: 'terraform', image: 'hashicorp/terraform:latest', ttyEnabled: true, command: 'cat', workingDir: '/home/jenkins'),
+      containerTemplate(name: 'golang', image: 'go:latest', ttyEnabled: true, command: 'cat', workingDir: '/home/jenkins'),
       containerTemplate(name: 'docker', image:'trion/jenkins-docker-client')
   ],
   envVars: [
@@ -51,6 +52,26 @@ podTemplate(
             sh 'terraform plan -out sdf-core-subnet/examples/simple/myplan sdf-core-subnet/examples/simple'
           }
         }   
+      }
+
+      stage('Terratest') {
+        container('golang') {
+          withCredentials([string(credentialsId: 'tenancy_ocid', variable: 'TF_VAR_tenancy_id'), 
+                           string(credentialsId: 'user_ocid_jeevan', variable: 'TF_VAR_user_id'), 
+                           string(credentialsId: 'fingerprint_jeevan', variable: 'TF_VAR_fingerprint'), 
+                           file(credentialsId: 'api_key', variable: 'TF_VAR_private_key_path')]) {
+            dir('sdf-tf-core-subnet-test/Simple_test') {
+              sh 'go test -run TestSimple'
+            }
+            
+          }
+        }
+      }
+      
+      stage('Approval') {
+        script {
+          def userInput = input(id: 'confirm', message: 'Apply Terraform?', parameters: [ [$class: 'BooleanParameterDefinition', defaultValue: false, description: 'Apply terraform', name: 'confirm'] ])
+        }
       }
       
       stage('Apply') {
