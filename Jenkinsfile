@@ -73,7 +73,7 @@ podTemplate(
               sh 'apt-get update && apt-get install -y \
                     unzip \
                     && rm -rf /var/lib/apt/lists/*'
-              sh 'curl -L -s https://releases.hashicorp.com/terraform/0.11.7/terraform_0.11.7_linux_amd64.zip -o /go/bin/terraform.zip \
+              sh 'curl -L -s https://releases.hashicorp.com/terraform/0.11.7/terraform_0.12.5_linux_amd64.zip -o /go/bin/terraform.zip \
                     && unzip /go/bin/terraform.zip -d /go/bin \
                     && chmod +x /go/bin/terraform'
               sh 'go test -v -run TestSimple'
