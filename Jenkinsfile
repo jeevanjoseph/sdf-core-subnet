@@ -47,8 +47,8 @@ podTemplate(
             sh 'env|grep TF_VAR'
             sh 'ls -altr'
             sh 'terraform version'
-            sh 'terraform init examples/simple'
-            sh 'terraform plan -out examples/simple/myplan examples/simple'
+            sh 'terraform init sdf-core-subnet/examples/simple'
+            sh 'terraform plan -out sdf-core-subnet/examples/simple/myplan sdf-core-subnet/examples/simple'
           }
         }   
       }
@@ -63,7 +63,7 @@ podTemplate(
                            string(credentialsId: 'user_ocid_jeevan', variable: 'TF_VAR_user_id'), 
                            string(credentialsId: 'fingerprint_jeevan', variable: 'TF_VAR_fingerprint'), 
                            file(credentialsId: 'api_key', variable: 'TF_VAR_private_key_path')]) {
-            sh 'terraform apply -input=false examples/simple/myplan'
+            sh 'terraform apply -input=false sdf-core-subnet/examples/simple/myplan'
           }
         }
       }
@@ -78,7 +78,7 @@ podTemplate(
                            string(credentialsId: 'user_ocid_jeevan', variable: 'TF_VAR_user_id'), 
                            string(credentialsId: 'fingerprint_jeevan', variable: 'TF_VAR_fingerprint'), 
                            file(credentialsId: 'api_key', variable: 'TF_VAR_private_key_path')]) {
-            sh 'terraform destroy -auto-approve examples/simple'
+            sh 'terraform destroy -auto-approve sdf-core-subnet/examples/simple'
           }
         }
       }
