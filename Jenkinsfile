@@ -5,7 +5,7 @@ podTemplate(
   containers: [
       // containerTemplate(name: 'jnlp', image: 'jenkins/jnlp-slave:latest',args: '${computer.jnlpmac} ${computer.name}', workingDir: '/home/jenkins'),
       containerTemplate(name: 'terraform', image: 'hashicorp/terraform:latest', ttyEnabled: true, command: 'cat', workingDir: '/home/jenkins'),
-      containerTemplate(name: 'golang', image: 'go:latest', ttyEnabled: true, command: 'cat', workingDir: '/home/jenkins'),
+      containerTemplate(name: 'golang', image: 'golang:latest', ttyEnabled: true, command: 'cat', workingDir: '/home/jenkins'),
       containerTemplate(name: 'docker', image:'trion/jenkins-docker-client')
   ],
   envVars: [
@@ -67,7 +67,7 @@ podTemplate(
           }
         }
       }
-      
+
       stage('Approval') {
         script {
           def userInput = input(id: 'confirm', message: 'Apply Terraform?', parameters: [ [$class: 'BooleanParameterDefinition', defaultValue: false, description: 'Apply terraform', name: 'confirm'] ])
