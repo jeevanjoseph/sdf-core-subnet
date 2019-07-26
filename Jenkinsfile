@@ -68,8 +68,8 @@ podTemplate(
               sh 'env|grep TF_VAR'
               sh 'pwd'
               sh 'go version'
-              sh 'go get -d -v'
-              sh 'go test -run TestSimple'
+              sh 'go get -v'
+              sh 'go test -i -run TestSimple'
             }
             
           }
