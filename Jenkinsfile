@@ -11,6 +11,7 @@ podTemplate(
   envVars: [
       envVar(key:'TF_VAR_region', value:'us-phoenix-1'),
       envVar(key:'TF_VAR_default_compartment_id', value:'ocid1.compartment.oc1..aaaaaaaa4vxl6yyvfcumwutejntiu3tzcwacbpgdqndh3kct5i65ahvz7oma')
+      envVar(key:'GO_PATH', value:'/home/jenkins')
 
   ],
   volumes: [
