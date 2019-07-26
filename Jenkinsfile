@@ -68,7 +68,7 @@ podTemplate(
               sh 'env|grep TF_VAR'
               sh 'pwd'
               sh 'go version'
-              sh 'go get -u github.com/golang/dep/cmd/dep && dep ensure'
+              sh 'go get -d -v'
               sh 'go test -run TestSimple'
             }
             
