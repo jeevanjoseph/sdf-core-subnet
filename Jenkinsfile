@@ -20,6 +20,7 @@ podTemplate(
     node('build-pod'){
       stage('Checkout') {
         checkout scm
+        checkout poll: false, scm: [$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'sdf-tf-core-subet-test']], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/jeevanjoseph/sdf-tf-core-subet-test.git']]]
       }
       //container = the container label
       stage('Init & Plan') { 
@@ -30,6 +31,7 @@ podTemplate(
                            file(credentialsId: 'api_key', variable: 'TF_VAR_private_key_path')] 
                            ) {
             sh 'env|grep TF_VAR'
+            sh 'ls -altr'
             sh 'terraform version'
             sh 'terraform init examples/simple'
             sh 'terraform plan -out examples/simple/myplan examples/simple'
