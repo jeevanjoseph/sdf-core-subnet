@@ -61,6 +61,10 @@ podTemplate(
                            string(credentialsId: 'fingerprint_jeevan', variable: 'TF_VAR_fingerprint'), 
                            file(credentialsId: 'api_key', variable: 'TF_VAR_private_key_path')]) {
             dir('sdf-tf-core-subnet-test/Simple_test') {
+              sh 'ls -altr'
+              sh 'env|grep TF_VAR'
+              sh 'pwd'
+              sh 'go version'
               sh 'go test -run TestSimple'
             }
             
