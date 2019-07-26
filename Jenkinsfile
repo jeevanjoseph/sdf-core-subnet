@@ -19,15 +19,22 @@ podTemplate(
     //node = the pod label
     node('build-pod'){
       stage('Checkout') {
-        parallel 
-         'module': {
-            stage('module'){
-              checkout scm
-            }}, 
-         'tests': 
-            stage('tests'){  
-              checkout poll: false, scm: [$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'sdf-tf-core-subet-test']], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/jeevanjoseph/sdf-tf-core-subet-test.git']]]
-            }
+        checkout poll: false, 
+                 scm: [$class: 'GitSCM', 
+                    branches: [[name: '*/master']], 
+                    doGenerateSubmoduleConfigurations: false, 
+                    extensions: [[$class: 'RelativeTargetDirectory', 
+                      relativeTargetDir: 'sdf-core-subnet']], 
+                    submoduleCfg: [], 
+                    userRemoteConfigs: [[url: 'https://github.com/jeevanjoseph/sdf-core-subnet.git']]]
+        checkout poll: false,  
+                 scm: [$class: 'GitSCM', 
+                    branches: [[name: '*/master']], 
+                    doGenerateSubmoduleConfigurations: false, 
+                    extensions: [[$class: 'RelativeTargetDirectory', 
+                      relativeTargetDir: 'sdf-tf-core-subet-test']], 
+                    submoduleCfg: [], 
+                    userRemoteConfigs: [[url: 'https://github.com/jeevanjoseph/sdf-tf-core-subet-test.git']]]
       }
       //container = the container label
       stage('Init & Plan') { 
