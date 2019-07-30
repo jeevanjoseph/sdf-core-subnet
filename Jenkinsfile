@@ -57,8 +57,10 @@ podTemplate(
 
       stage('Terratest') {
         container('golang') {
-          withCredentials([string(credentialsId: 'tenancy_ocid', variable: 'TF_VAR_tenancy_id'), 
+          withCredentials([string(credentialsId: 'tenancy_ocid', variable: 'TF_VAR_tenancy_id'),
+                           string(credentialsId: 'tenancy_ocid', variable: 'TF_VAR_tenancy_ocid'), 
                            string(credentialsId: 'user_ocid_jeevan', variable: 'TF_VAR_user_id'), 
+                           string(credentialsId: 'user_ocid_jeevan', variable: 'TF_VAR_user_ocid'), 
                            string(credentialsId: 'fingerprint_jeevan', variable: 'TF_VAR_fingerprint'), 
                            file(credentialsId: 'api_key', variable: 'TF_VAR_private_key_path')]) {
             dir('sdf-tf-core-subet-test/Simple_test') {
