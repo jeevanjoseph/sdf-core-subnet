@@ -10,7 +10,6 @@ podTemplate(
   ],
   envVars: [
       envVar(key:'TF_VAR_region', value:'us-phoenix-1'),
-      envVar(key:'TF_VARregion', value:'us-phoenix-1'),
       envVar(key:'OCI_GO_SDK_DEBUG', value:'debug'),
       envVar(key:'TF_VAR_default_compartment_id', value:'ocid1.compartment.oc1..aaaaaaaa4vxl6yyvfcumwutejntiu3tzcwacbpgdqndh3kct5i65ahvz7oma'),
       envVar(key:'GOPATH', value:'/home/jenkins/workspace/sdf-core-subnet_master/sdf-tf-core-subet-test/')
@@ -60,13 +59,11 @@ podTemplate(
       stage('Terratest') {
         container('golang') {
           withCredentials([string(credentialsId: 'tenancy_ocid', variable: 'TF_VAR_tenancy_id'),
-                           string(credentialsId: 'tenancy_ocid', variable: 'TF_VARtenancy_ocid'), 
+                           string(credentialsId: 'tenancy_ocid', variable: 'TF_VAR_tenancy_ocid'), 
                            string(credentialsId: 'user_ocid_jeevan', variable: 'TF_VAR_user_id'), 
-                           string(credentialsId: 'user_ocid_jeevan', variable: 'TFVAR_user_ocid'), 
+                           string(credentialsId: 'user_ocid_jeevan', variable: 'TF_VAR_user_ocid'), 
                            string(credentialsId: 'fingerprint_jeevan', variable: 'TF_VAR_fingerprint'), 
-                           string(credentialsId: 'fingerprint_jeevan', variable: 'TF_VARfingerprint'), 
-                           file(credentialsId: 'api_key', variable: 'TF_VAR_private_key_path'),
-                           file(credentialsId: 'api_key', variable: 'TF_VARprivate_key_path')]) {
+                           file(credentialsId: 'api_key', variable: 'TF_VAR_private_key_path')]) {
             dir('sdf-tf-core-subet-test/Simple_test') {
               sh 'ls -altr '
               sh 'env|grep TF_VAR'
