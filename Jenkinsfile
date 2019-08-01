@@ -73,11 +73,7 @@ podTemplate(
         }
       }
 
-      // stage('Approval') {
-      //   script {
-      //     def userInput = input(id: 'confirm', message: 'Apply Terraform?', parameters: [ [$class: 'BooleanParameterDefinition', defaultValue: false, description: 'Apply terraform', name: 'confirm'] ])
-      //   }
-      // }
+      
 
       stage('Init & Plan') { 
         container('terraform') {
@@ -105,11 +101,7 @@ podTemplate(
           }
         }
       }
-      // stage('Approval') {
-      //   script {
-      //     def userInput = input(id: 'confirm', message: 'Apply Terraform?', parameters: [ [$class: 'BooleanParameterDefinition', defaultValue: false, description: 'Apply terraform', name: 'confirm'] ])
-      //   }
-      // }
+      
       stage('Destroy') {
         container('terraform') {
           withCredentials([string(credentialsId: 'tenancy_ocid', variable: 'TF_VAR_tenancy_id'), 
