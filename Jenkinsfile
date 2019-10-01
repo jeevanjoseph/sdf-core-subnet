@@ -1,4 +1,4 @@
-
+// jnlp conatiner is not required to be explicitly specified
 podTemplate(
   name: 'build-pod',
   label: 'build-pod',
