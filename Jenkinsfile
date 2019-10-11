@@ -4,8 +4,8 @@ podTemplate(
   label: 'build-pod',
   containers: [
       //containerTemplate(name: 'jnlp', image: 'jenkins/jnlp-slave:latest',args: '${computer.jnlpmac} ${computer.name}', workingDir: '/home/jenkins'),
-      containerTemplate(name: 'terraform', image: 'hashicorp/terraform:latest', ttyEnabled: true, command: 'cat', workingDir: '/home/jenkins/agent'),
-      containerTemplate(name: 'golang', image: 'golang:latest', ttyEnabled: true, command: 'cat', workingDir: '/home/jenkins/agent'),
+      containerTemplate(name: 'terraform', image: 'hashicorp/terraform:latest', ttyEnabled: true, command: 'cat', workingDir: '/home/jenkins'),
+      containerTemplate(name: 'golang', image: 'golang:latest', ttyEnabled: true, command: 'cat', workingDir: '/home/jenkins'),
       //containerTemplate(name: 'docker', image:'trion/jenkins-docker-client')
   ],
   envVars: [
