@@ -16,10 +16,10 @@ podTemplate(
       //  envVar(key:'TF_VAR_compartment_ocid', value:'ocid1.compartment.oc1..aaaaaaaa4vxl6yyvfcumwutejntiu3tzcwacbpgdqndh3kct5i65ahvz7oma'),
       envVar(key:'GOPATH', value:'/home/jenkins/workspace/sdf-core-subnet_master/sdf-tf-core-subet-test/')
 
-  ],
-  volumes: [
-      hostPathVolume(mountPath: '/var/run/docker.sock',hostPath: '/var/run/docker.sock')
-      ]
+  ]//,
+   //volumes: [
+   //   hostPathVolume(mountPath: '/var/run/docker.sock',hostPath: '/var/run/docker.sock')
+   //   ]
   ){
     //node = the pod label
     node('build-pod'){
